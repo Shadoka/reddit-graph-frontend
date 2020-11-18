@@ -1,6 +1,7 @@
 const React = require('react');
 const ReactDOM = require('react-dom');
 const client = require('./client.js');
+const lodash = require('lodash');
 
 const BACKEND = "http://localhost:8080"
 
@@ -23,44 +24,54 @@ class App extends React.Component {
     this.setState({subreddits: response.entity});
   }
 
+  render() {
+    console.log("in render");
+
+    return (
+      <div class='button-container'>
+        {this.createButtonRows()}
+      </div>
+    );
+  }
+
+  createButtonRows() {
+    const row_buttons = lodash.chunk(this.state.subreddits, 3);
+    return row_buttons.map(buttons => <ButtonRow buttonData={buttons}/>);
+  }
+}
+
+class ButtonRow extends React.Component {
+
   onButtonClick(endpoint) {
     alert(endpoint);
   }
 
   render() {
-    console.log("in render");
-    const buttons = this.state.subreddits.map(sub => <SubredditButton name={sub} clickMethod={this.onButtonClick}/>);
+    const buttons = this.props.buttonData.map(data => <SubredditButton name={data} clickMethod={this.onButtonClick}/>);
 
     return (
-      <div class='button-container'>
+      <div class='button-row'>
         {buttons}
       </div>
     );
-
-    //return (
-    //  <EmployeeList employees={this.state.employees}/>
-    //);
   }
 
-  createButtonRows() {
-    var rows;
-    var currentRow;
-    
-  }
 }
 
 class SubredditButton extends React.Component {
+
   render() {
     const endpoint = BACKEND.concat("/subreddits/").concat(this.props.name);
 
     return (
-      <input type='button' onClick={() => this.props.clickMethod(endpoint)} value={this.props.name}/>
+      <input type='button' class='button-subreddit' onClick={() => this.props.clickMethod(endpoint)} value={this.props.name}/>
     );
   }
 
 }
 
 class EmployeeList extends React.Component {
+
   render() {
     const employees = this.props.employees.map(employee =>
       <Employee key={employee.id} employee={employee}/>  
