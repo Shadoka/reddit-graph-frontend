@@ -5,6 +5,25 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: rgba(211 211, 211, 0.100);
+}
+
+.button-container {
+  max-width: 800px;
+  max-height: 200px;
+  margin: 0 auto;
+  border-color: red;
+  border: 3px;
+}
+
+.button-row {
+  max-width: fit-content;
+  max-height: fit-content;
+}
+
+.button-subreddit {
+  max-width: fit-content;
+  max-height: fit-content;
 }
 
 code {
