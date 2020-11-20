@@ -9,15 +9,15 @@ class App extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {subreddits: []};
+    this.state = {
+        subreddits: []
+      };
+
+    this.storeSubreddits = this.storeSubreddits.bind(this);
   }
 
   componentDidMount() {
-    console.log("before backend call");
-    client({method: 'GET', path: BACKEND.concat('/subreddits/available')}).then(response => {
-      this.setState({subreddits: response.entity});
-    });
-    console.log("after backend call");
+    client({method: 'GET', path: BACKEND.concat('/subreddits/available')}).then(this.storeSubreddits);
   }
 
   storeSubreddits(response) {
@@ -25,18 +25,17 @@ class App extends React.Component {
   }
 
   render() {
-    console.log("in render");
-
     return (
-      <div class='button-container'>
+      <div className='button-container'>
         {this.createButtonRows()}
       </div>
     );
   }
 
   createButtonRows() {
-    const row_buttons = lodash.chunk(this.state.subreddits, 3);
-    return row_buttons.map(buttons => <ButtonRow buttonData={buttons}/>);
+    return lodash
+      .chunk(this.state.subreddits, 3)
+      .map(reddits => <ButtonRow buttonData={reddits}/>);
   }
 }
 
@@ -47,27 +46,38 @@ class ButtonRow extends React.Component {
   }
 
   render() {
-    const buttons = this.props.buttonData.map(data => <SubredditButton name={data} clickMethod={this.onButtonClick}/>);
+    const buttons = this.props.buttonData.map(data =><SubredditButton name={data} clickMethod={this.onButtonClick} key={data}/>);
 
     return (
-      <div class='button-row'>
+      <div className='button-row'>
         {buttons}
       </div>
     );
   }
-
 }
 
 class SubredditButton extends React.Component {
 
-  render() {
-    const endpoint = BACKEND.concat("/subreddits/").concat(this.props.name);
-
-    return (
-      <input type='button' class='button-subreddit' onClick={() => this.props.clickMethod(endpoint)} value={this.props.name}/>
-    );
+  constructor(props) {
+    super(props);
+    this.state = {image_url: ""};
   }
 
+  componentDidMount() {
+    client({method: 'GET', path: BACKEND.concat('/subreddits/').concat(this.props.name).concat('/image')}).then(image => {
+      this.setState({image_url: image.entity.url})    
+    })
+  }
+
+  render() {
+    const endpoint = BACKEND.concat("/subreddits/").concat(this.props.name);
+    
+    return (
+      <span className='button-span' style={{backgroundImage: "url('" + this.state.image_url + "')"}}>
+        <a className='subreddit-button' href='javascript:void(0)' onClick={() => this.props.clickMethod(endpoint)} title={this.props.name}></a>
+      </span>
+    );
+  }
 }
 
 export default App;

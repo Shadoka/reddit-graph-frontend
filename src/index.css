@@ -5,15 +5,13 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: rgba(211 211, 211, 0.100);
+  background-color: gray;
 }
 
 .button-container {
-  max-width: 800px;
-  max-height: 200px;
+  max-width: 1245px;
+  max-height: 250px;
   margin: 0 auto;
-  border-color: red;
-  border: 3px;
 }
 
 .button-row {
@@ -21,9 +19,29 @@ body {
   max-height: fit-content;
 }
 
-.button-subreddit {
-  max-width: fit-content;
-  max-height: fit-content;
+.button-span {
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  display: inline-block;
+  width: 400px;
+  height: 119px;
+  border-width: 5px;
+  border-radius: 15px;
+  border-style: solid;
+  border-color: black;
+  margin-left: 5px;
+  margin-top: 5px;
+}
+
+.button-span:hover {
+  border-color: #FE6100;
+}
+
+.button-span a {
+  display: flex;
+  size: inherit;
+  width: inherit;
+  height: inherit;
 }
 
 code {
