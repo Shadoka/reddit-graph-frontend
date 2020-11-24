@@ -10,8 +10,11 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-        subreddits: []
-      };
+      subreddits: [],
+      selected_subs: []
+    };
+
+    this.selectSubreddit = this.selectSubreddit.bind(this);
   }
 
   componentDidMount() {
@@ -28,21 +31,37 @@ class App extends React.Component {
     );
   }
 
+  selectSubreddit(subreddit_name) {
+    const index = this.state.selected_subs.indexOf(subreddit_name);
+    if (index > -1) {
+      this.setState({selected_subs: this.state.selected_subs.filter(name => name !== subreddit_name)});
+    } else {
+      this.setState({selected_subs: this.state.selected_subs.concat(subreddit_name)});
+    }
+  }
+
   createButtonRows() {
     return lodash
       .chunk(this.state.subreddits, 3)
-      .map(reddits => <ButtonRow buttonData={reddits}/>);
+      .map(reddits => <ButtonRow buttonData={reddits} selected_subs={this.state.selected_subs} onSubSelection={this.selectSubreddit}/>);
   }
 }
-
+/*
+* Row of subreddit buttons.
+* Properties:
+* buttonData      => string array of all the subreddits in this show 
+* selected_subs    => string array of all currently selected subreddits
+* onSubSelection  => function to execute when a subreddit is selected
+*/
 class ButtonRow extends React.Component {
 
-  onButtonClick(endpoint) {
-    alert(endpoint);
-  }
-
   render() {
-    const buttons = this.props.buttonData.map(data =><SubredditButton name={data} clickMethod={this.onButtonClick} key={data}/>);
+    console.log(this.props.selected_subs);
+    const buttons = this.props.buttonData.map(data => {
+      const is_selected = this.props.selected_subs.includes(data);
+
+      return <SubredditButton name={data} clickMethod={this.props.onSubSelection} selected={is_selected} key={data}/>
+    });
 
     return (
       <div className='button-row'>
@@ -52,13 +71,19 @@ class ButtonRow extends React.Component {
   }
 }
 
+/*
+* Button representing a subreddit. Shows the banner image of the subreddit.
+* Properties:
+* name => name of the subreddit this button represents
+* clickMethod => method to execute when this button is clicked
+* selected => flag to indicate whether or not this button is currently selected
+*/
 class SubredditButton extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      image_url: "",
-      selected: false
+      image_url: ""
     };
   }
 
@@ -68,19 +93,11 @@ class SubredditButton extends React.Component {
     })
   }
 
-  select() {
-    this.setState({
-      image_url: this.state.image_url,
-      selected: !this.state.selected
-    });
-  }
-
   render() {
     const endpoint = BACKEND.concat("/subreddits/").concat(this.props.name);
-    // () => this.props.clickMethod(endpoint)
 
     var buttonClasses = "";
-    if (this.state.selected) {
+    if (this.props.selected) {
       buttonClasses += "button-span-selected";
     } else {
       buttonClasses += "button-span";
@@ -88,7 +105,7 @@ class SubredditButton extends React.Component {
 
     return (
       <span className={buttonClasses} style={{backgroundImage: "url('" + this.state.image_url + "')"}}>
-        <a href='javascript:void(0)' onClick={() => this.select()} title={this.props.name}></a>
+        <a href='javascript:void(0)' onClick={() => this.props.clickMethod(this.props.name)} title={this.props.name}></a>
       </span>
     );
   }
