@@ -12,16 +12,12 @@ class App extends React.Component {
     this.state = {
         subreddits: []
       };
-
-    this.storeSubreddits = this.storeSubreddits.bind(this);
   }
 
   componentDidMount() {
-    client({method: 'GET', path: BACKEND.concat('/subreddits/available')}).then(this.storeSubreddits);
-  }
-
-  storeSubreddits(response) {
-    this.setState({subreddits: response.entity});
+    client({method: 'GET', path: BACKEND.concat('/subreddits/available')}).then(response => {
+      this.setState({subreddits: response.entity});
+    });
   }
 
   render() {
@@ -60,7 +56,10 @@ class SubredditButton extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {image_url: ""};
+    this.state = {
+      image_url: "",
+      selected: false
+    };
   }
 
   componentDidMount() {
@@ -69,12 +68,27 @@ class SubredditButton extends React.Component {
     })
   }
 
+  select() {
+    this.setState({
+      image_url: this.state.image_url,
+      selected: !this.state.selected
+    });
+  }
+
   render() {
     const endpoint = BACKEND.concat("/subreddits/").concat(this.props.name);
-    
+    // () => this.props.clickMethod(endpoint)
+
+    var buttonClasses = "";
+    if (this.state.selected) {
+      buttonClasses += "button-span-selected";
+    } else {
+      buttonClasses += "button-span";
+    }
+
     return (
-      <span className='button-span' style={{backgroundImage: "url('" + this.state.image_url + "')"}}>
-        <a className='subreddit-button' href='javascript:void(0)' onClick={() => this.props.clickMethod(endpoint)} title={this.props.name}></a>
+      <span className={buttonClasses} style={{backgroundImage: "url('" + this.state.image_url + "')"}}>
+        <a href='javascript:void(0)' onClick={() => this.select()} title={this.props.name}></a>
       </span>
     );
   }

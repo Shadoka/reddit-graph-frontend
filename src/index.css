@@ -9,8 +9,8 @@ body {
 }
 
 .button-container {
-  max-width: 1245px;
-  max-height: 250px;
+  max-width: 1290px;
+  max-height: 310px;
   margin: 0 auto;
 }
 
@@ -19,18 +19,20 @@ body {
   max-height: fit-content;
 }
 
+/* Clickable Button with background image */
+
 .button-span {
   background-repeat: no-repeat;
   background-size: 100% 100%;
   display: inline-block;
   width: 400px;
-  height: 119px;
+  height: 120px;
+  margin-left: 20px;
+  margin-top: 10px;
   border-width: 5px;
   border-radius: 15px;
   border-style: solid;
   border-color: black;
-  margin-left: 5px;
-  margin-top: 5px;
 }
 
 .button-span:hover {
@@ -43,6 +45,46 @@ body {
   width: inherit;
   height: inherit;
 }
+
+/* Selected Button */
+
+.button-span-selected {
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  display: inline-block;
+  width: 400px;
+  height: 120px;
+  margin-left: 20px;
+  margin-top: 10px;
+  border-width: 5px;
+  border-radius: 15px;
+  border-style: solid;
+  border-color: blueviolet;
+}
+
+.button-span-selected a {
+  display: flex;
+  size: inherit;
+  width: inherit;
+  height: inherit;
+}
+
+/* Underlined text for button */
+
+/*.button-text {
+  display: inline-block;
+  width: 410px;
+  height: 15px;
+  text-align: center;
+  font-family: 'Roboto', sans-serif;
+   border-color: black;
+  border-style: solid;
+  border-width: 5px;
+  border-top-style: none;
+  border-left-style: none;
+  border-right-style: none; 
+  
+} */
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
