@@ -90,7 +90,7 @@ body {
 
 .list-item {
   max-width: fit-content;
-  align-items: center;
+  align-items: flex-start;
   margin-left: 10px;
 }
 
