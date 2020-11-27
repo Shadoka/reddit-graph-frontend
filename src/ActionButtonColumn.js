@@ -12,7 +12,7 @@ class ActionButtonColumn extends React.Component {
             <div className='action-button-container'>
                 <div className='center-container'>
                     <ButtonGroup orientation="vertical" color="primary" aria-label="vertical contained primary button group" variant="contained">
-                        <Button startIcon={<PersonIcon />}>
+                        <Button startIcon={<PersonIcon />} onClick={() => this.props.userDataFetchMethod()}>
                             Friend Chart
                         </Button>
                         <Button startIcon={<PeopleIcon />}>

@@ -22,6 +22,7 @@ class App extends React.Component {
     };
 
     this.selectSubreddit = this.selectSubreddit.bind(this);
+    this.getUserData = this.getUserData.bind(this);
   }
 
   componentDidMount() {
@@ -40,7 +41,7 @@ class App extends React.Component {
             {this.createButtonRows()}
           </div>
           <div className='content-container'>
-            <ActionButtonColumn />
+            <ActionButtonColumn userDataFetchMethod={this.getUserData}/>
             <UserListScreen data={this.state.crossposter} list_title={title}/>
             <div className='filler-div'></div>
           </div>
@@ -53,6 +54,15 @@ class App extends React.Component {
         </div>
       );
     }
+  }
+
+  getUserData() {
+    const currently_selected = this.state.selected_subs[0];
+    const endpoint = BACKEND.concat("/user/").concat(currently_selected).concat("/friends");
+
+    client({method: 'GET', path: endpoint}).then(response => {
+      console.log(response.entity.userToFriend);
+    });
   }
 
   selectSubreddit(subreddit_name) {
