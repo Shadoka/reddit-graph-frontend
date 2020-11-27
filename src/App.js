@@ -1,5 +1,6 @@
 import UserListScreen from './UserListScreen';
 import ButtonRow from './ButtonRow';
+import ActionButtonColumn from './ActionButtonColumn';
 
 const React = require('react');
 const ReactDOM = require('react-dom');
@@ -32,14 +33,16 @@ class App extends React.Component {
   render() {
     if (this.state.crossposter.length > 0) {
       const title = "Crossposter " + this.state.selected_subs[0] + " & " + this.state.selected_subs[1];
-
+      
       return (
         <div className='application-container'>
           <div className='button-container'>
             {this.createButtonRows()}
           </div>
           <div className='content-container'>
+            <ActionButtonColumn />
             <UserListScreen data={this.state.crossposter} list_title={title}/>
+            <div className='filler-div'></div>
           </div>
         </div>
       );
