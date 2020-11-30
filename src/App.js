@@ -1,6 +1,7 @@
 import UserListScreen from './UserListScreen';
 import ButtonRow from './ButtonRow';
 import ActionButtonColumn from './ActionButtonColumn';
+import FriendGraph from './FriendGraph';
 
 const React = require('react');
 const ReactDOM = require('react-dom');
@@ -32,7 +33,7 @@ class App extends React.Component {
   }
 
   render() {
-    if (this.state.crossposter.length > 0) {
+    if (this.state.crossposter.length > 0) { // show crossposter when 2+ selected
       const title = "Crossposter " + this.state.selected_subs[0] + " & " + this.state.selected_subs[1];
       
       return (
@@ -47,7 +48,20 @@ class App extends React.Component {
           </div>
         </div>
       );
-    } else {
+    } else if (this.state.selected_subs.length === 1) { // show friend graph when 1 selected
+      return (
+        <div className='application-container'>
+          <div className='button-container'>
+            {this.createButtonRows()}
+          </div>
+          <div className='content-container'>
+            <ActionButtonColumn userDataFetchMethod={this.getUserData}/>
+            <FriendGraph />
+            <div className='filler-div'></div>
+          </div>
+        </div>
+      );
+    } else { // show nothing when nothing is selected
       return (
         <div className='button-container'>
           {this.createButtonRows()}

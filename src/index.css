@@ -125,11 +125,20 @@ body {
 .action-button-container {
   width: 25%;
   min-width: 25%;
-  /*margin: 0 auto; */
 }
 
 .center-container {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+#canvas {
+  display: inline-block;
+  width: 50%;
+  min-width: 50%;
+  height: 1000px;
+  min-height: 100%;
+  margin: 0 auto;
+  background-color: lightgray;
 }
