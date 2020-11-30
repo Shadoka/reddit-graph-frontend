@@ -2,8 +2,6 @@ import React from 'react';
 
 const d3 = require('d3');
 
-const BASE_RADIUS = 25;
-
 const friend_data = {
     "tilmann": ["max", "tobi", "michael"],
     "tobi": ["max", "tilmann"],
@@ -12,75 +10,117 @@ const friend_data = {
     "max": ["tobi"]
 };
 
-const FRIENDS_KEY = "friends";
-const GRAPH_INFO_KEY = "graph";
+let drag = simulation => {
+    function dragStarted(event) {
+        if (!event.active) {
+            simulation.alphaTarget(0.3).restart();
+        }
+        event.subject.fx = event.subject.x;
+        event.subject.fy = event.subject.y;
+    }
+
+    function dragged(event) {
+        event.subject.fx = event.x;
+        event.subject.fy = event.y;
+    }
+
+    function dragEnded(event) {
+        if (!event.active) {
+            simulation.alphaTarget(0);
+        }
+        event.subject.fx = null;
+        event.subject.fy = null;
+    }
+
+    return d3.drag()
+        .on("start", dragStarted)
+        .on("drag", dragged)
+        .on("end", dragEnded);
+}
 
 class FriendGraph extends React.Component {
 
-    constructor(props) {
-        super(props);
-    }
-
     componentDidMount() {
-        const enriched_data = this.addGraphInformation();
+        const data = this.convertToGraphData();
 
-        var svg = d3.select(this.node);
+        const nodes = data.nodes.map(d => Object.create(d));
+        const links = data.links.map(d => Object.create(d));
+
+        const width = 600;
+        const height = 600;
+
+        const simulation = d3.forceSimulation(nodes)
+            .force("link", d3.forceLink(links).id(d => d.name))
+            .force("charge", d3.forceManyBody())
+            .force("center", d3.forceCenter(width / 2, height / 2));
+
+        var svg = d3.select(this.node)
+            .attr("viewBox", [0, 0, width, height]);
         
-        var circles = svg.selectAll("circle")
-                        .data(enriched_data)
-                        .enter()
-                        .append("circle");
-        
-        var drawn_circles = circles.attr("cx", d => d["graph"].cx)
-            .attr("cy", d => d["graph"].cy)
-            .attr("r", d => d["graph"].r)
-            .style("fill", d => d["graph"].fill)
-            .style("stroke", "black")
-            .style("stroke-width", 1.5);
+        const link = svg.append("g")
+            .attr("stroke", "#999")
+            .attr("stroke-opacity", 0.6)
+            .selectAll("line")
+            .data(links)
+            .join("line")
+            .attr("stroke-width", 1);
+
+        const node = svg.append("g")
+            .attr("stroke", "#fff")
+            .attr("stroke-width", 1.5)
+            .selectAll("circle")
+            .data(nodes)
+            .join("circle")
+            .attr("r", 5)
+            .attr("fill", "green")
+            .call(drag(simulation));
+
+        node.append("title").text(d => d.name);
+
+        simulation.on("tick", () => {
+            link.attr("x1", d => d.source.x)
+                .attr("y1", d => d.source.y)
+                .attr("x2", d => d.target.x)
+                .attr("y2", d => d.target.y);
+
+            node.attr("cx", d => d.x)
+                .attr("cy", d => d.y);
+        });
     }
     
     render() {
         return (
             <div id='canvas'>
-                <svg ref={node => this.node = node} width='100%' height='100%'>
+                <svg ref={node => this.node = node} width='600px' height='600px'>
                 </svg>
             </div>
         );
     }
 
-    addGraphInformation() {
-        var enriched_friend_data = [];
+    convertToGraphData() {
+        var nodes = [];
+        var links = [];
 
-        const start_x = 125;
-        // 125 is max radius, we add 10 for some padding
-        const start_y = 135;
-        const distance = 50;
-        const max_friends = this.maxAmountFriends();
-        const radius_per_friend = 100 / max_friends;
-
-        var counter = 0;
-        for (const user of Object.keys(friend_data)) {
-            const friends = friend_data[user];
-
-            let radius = BASE_RADIUS + (friends.length * radius_per_friend);
-            let current_x = start_x + (counter * 125) + distance;
-
-            const enriched_friend = {
+        for (const [user, friends] of Object.entries(friend_data)) {
+            let current_node = {
                 "name": user,
-                "friends": friends,
-                "graph": {
-                    cx: current_x,
-                    cy: start_y,
-                    r: radius,
-                    fill: "none"
-                }
+                "size": friends.length
             };
-            enriched_friend_data.push(enriched_friend);
+            nodes.push(current_node);
 
-            counter++;
+            for (const friend of friends) {
+                let current_link = {
+                    "source": user,
+                    "target": friend
+                };
+                links.push(current_link);
+            }
         }
 
-        return enriched_friend_data;
+        return {
+            "nodes": nodes,
+            "links": links
+        };
     }
 
     maxAmountFriends() {
